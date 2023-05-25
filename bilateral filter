@@ -1,0 +1,41 @@
+//  main.cpp
+//  opencv Project test
+//
+//
+//  @author KIM nawon
+//  @date 2023.05.23
+
+#include <opencv2/opencv.hpp>
+using namespace cv;
+using namespace std;
+
+int main() {
+    Mat input = imread("label2.jpeg",1);
+    Mat gray;
+    
+    //convert gray scale
+    cvtColor(input, gray, COLOR_BGR2GRAY);
+    
+    //bilateral filter
+    Mat denosied;
+    bilateralFilter(gray, denosied, 9, 75, 75);
+    imshow("denosied", denosied);
+
+    
+    //closing
+    Mat closed;
+    morphologyEx(gray, closed, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(5, 5)));
+    imshow("closing", closed);
+
+    //blackhat
+    Mat blackhat;
+    morphologyEx(closed, blackhat, MORPH_BLACKHAT, getStructuringElement(MORPH_RECT, Size(5, 5)));
+    imshow("blackhat", blackhat);
+    
+    //thresholding
+    Mat thresholded;
+    threshold(blackhat, thresholded, 0, 255, THRESH_BINARY | THRESH_OTSU);
+    imshow("Result", thresholded);
+    waitKey(0);
+    
+}
